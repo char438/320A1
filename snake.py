@@ -7,15 +7,8 @@ def dfs_snake(node, snake, bitmask, current_length, size):
     max_len = current_length
 
     for i in range(size):
-        if (bitmask[node] >> i) & 1:
-            valid = True
-
-            for j in snake:
-                if j != node and bitmask[j] >> i & 1 and (node not in snake):
-                    valid = False
-                    break
-
-            if valid:
+        if (bitmask[node] >> i) & 1 and i not in snake:
+            if all((bitmask[j] >> i) & 1 == 0 for j in snake if j != node):
                 snake.add(i)
                 max_len = max(max_len, dfs_snake(i, snake, bitmask, current_length+1, size))
                 snake.remove(i)
@@ -50,8 +43,7 @@ def main():
             i += 1
             for node in lines[i].split():
                 bitmask[j] |= 1 << int(node)
-
-        print(find_max_snake(size, bitmask))
+        print(find_max_snake(size, bitmask) - 1)
         i += 1
 
 
